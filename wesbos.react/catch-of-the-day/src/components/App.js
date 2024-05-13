@@ -4,6 +4,7 @@ import Order from "./Order";
 import Inventory from "./Inventory";
 import sampleFishes from '../sample-fishes';
 import Fish from './Fish';
+import base from "../base";
 
 
 class App extends React.Component {
@@ -12,10 +13,41 @@ class App extends React.Component {
     order: {}
   };
 
+  // lifcycle methods on the React Component object
+  componentDidMount() {
+    const { params } = this.props.match;
+
+    const localStorageRef = localStorage.getItem(params.storeId);
+    if(localStorageRef) {
+      this.setState({ order: JSON.parse(localStorageRef) });
+    }
+
+    this.ref = base.syncState(`${params.storeId}/fishes`, {
+      context: this,
+      state: "fishes"
+    });
+  }
+
+  componentDidUpdate() {
+    const { params } = this.props.match;
+    localStorage.setItem(params.storeId, JSON.stringify(this.state.order));
+  }
+
+  componentWillUnmount() {
+    base.removeBinding(this.ref);
+  }
+
+  // this is actually called from AddFishForm
+  // a ref to this method is passed down to Inventory
+  // in props, and then is passed to AddFishForm so that it can be called
   addFish = (fish) => {
     const fishes =  { ...this.state.fishes };
     fishes[`fish${Date.now()}`] = fish;
     this.setState({ fishes: fishes }); //can also be this.setState({ fishes })
+    // remember that to update state, you make a copy of what is in state
+    // update the copy
+    // then use setState to update the state
+    // you do not mutate objects already in state
   }
 
   loadSampleFishes = () => {
