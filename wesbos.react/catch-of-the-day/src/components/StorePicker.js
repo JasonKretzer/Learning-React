@@ -5,15 +5,15 @@ class StorePicker extends React.Component {
   // to be used with a ref in the input element below
   myInput = React.createRef();
 
-  // do it this way to make `this` available otherwise you have to make
+  // do the function declaration this way to make `this` available otherwise you have to make
   // a constructor and do this: this.goToStore = this.goToStore.bind(this)
   // this is called a property
   goToStore = (event) => {
     event.preventDefault();
-    // the first value is from React which gets the element
-    // the second value is called on that
-    const storeName = this.myInput.current.value;
+    const storeName = this.myInput.current.value; // current gets the input element, value is a standard value call on that element
     this.props.history.push(`/store/${storeName}`);
+    // this is called push state -- note that props.history is part of the Router
+    // StorePicker is a child element (NOT a subclass) of Router
   }
 
   render() {
